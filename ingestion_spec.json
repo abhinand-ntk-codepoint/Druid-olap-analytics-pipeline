@@ -1,0 +1,65 @@
+// Roll No: 2025AG05637 | DM4ML Lab Assignment — Apache Druid native batch ingestion spec (datasource dm4ml_2025AG05637)
+{
+  "type": "index_parallel",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "dm4ml_2025AG05637",
+      "timestampSpec": {
+        "column": "order_date",
+        "format": "yyyy-MM-dd"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "market",
+          "region",
+          "country",
+          "segment",
+          "category",
+          "sub_category",
+          "ship_mode",
+          "order_priority",
+          "order_year",
+          "order_quarter",
+          "order_month"
+        ]
+      },
+      "metricsSpec": [
+        { "type": "count",       "name": "line_count" },
+        { "type": "doubleSum",   "name": "sales",           "fieldName": "sales" },
+        { "type": "longSum",     "name": "quantity",        "fieldName": "quantity" },
+        { "type": "doubleSum",   "name": "profit",          "fieldName": "profit" },
+        { "type": "doubleSum",   "name": "shipping_cost",   "fieldName": "shipping_cost" },
+        { "type": "doubleSum",   "name": "gross_sales",     "fieldName": "gross_sales" },
+        { "type": "doubleSum",   "name": "discount_amount", "fieldName": "discount_amount" },
+        { "type": "doubleSum",   "name": "cost",            "fieldName": "cost" },
+        { "type": "longSum",     "name": "ship_days",       "fieldName": "ship_days" },
+        { "type": "doubleMax",   "name": "max_unit_price",  "fieldName": "unit_price" },
+        { "type": "doubleMin",   "name": "min_unit_price",  "fieldName": "unit_price" }
+      ],
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "month",
+        "queryGranularity": "day",
+        "rollup": true
+      }
+    },
+    "ioConfig": {
+      "type": "index_parallel",
+      "inputSource": {
+        "type": "local",
+        "baseDir": "/mnt/c/DM4ML_Druid_Lab/data",
+        "filter": "superstore_clean.json"
+      },
+      "inputFormat": {
+        "type": "json"
+      },
+      "appendToExisting": false
+    },
+    "tuningConfig": {
+      "type": "index_parallel",
+      "partitionsSpec": { "type": "dynamic", "maxRowsPerSegment": 5000000 },
+      "maxRowsInMemory": 25000,
+      "maxNumConcurrentSubTasks": 1
+    }
+  }
+}
